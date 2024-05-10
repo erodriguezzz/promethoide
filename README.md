@@ -10,10 +10,10 @@
 
 
 ```bash
-docker run -d --network mymonitoringnet --name ubuntu1 ubuntu-with-prometheus
-docker run -d --network mymonitoringnet --name ubuntu2 ubuntu-with-prometheus
-docker run -d --network mymonitoringnet --name ubuntu3 ubuntu-with-prometheus
-docker run -d --network mymonitoringnet --name ubuntu4 ubuntu-with-prometheus
+docker run -d --network mymonitoringnet --name ubuntu1 my-ubuntu-prometheus
+docker run -d --network mymonitoringnet --name ubuntu2 my-ubuntu-prometheus
+docker run -d --network mymonitoringnet --name ubuntu3 my-ubuntu-prometheus
+docker run -d --network mymonitoringnet --name ubuntu4 my-ubuntu-prometheus
 
 ```
 ## Paso 5: Verificar la Implementación
