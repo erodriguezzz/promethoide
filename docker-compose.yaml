@@ -1,0 +1,27 @@
+version: latest
+
+networks:
+    monitor-net:
+        driver: bridge # https://docs.docker.com/network/drivers/
+
+services:
+
+    # This service scrapes metrics over http on other services and systems
+    prometheus:
+        image: prom/prometheus:latest
+        container_name: prometheus
+        restart: unless-stopped
+        volumes:
+            - ./prometheus.yml:/etc/prometheus/prometheus.yml
+        command:
+            - '--config.file=/etc/prometheus/prometheus.yml'
+            - '--storage.tsdb.path=/prometheus'
+            - '--web.console.libraries=/etc/prometheus/console_libraries'
+            - '--web.console.templates=/etc/prometheus/consoles'
+            - '--web.enable-lifecycle'
+        expose:
+            - 9090
+        ports:
+            - 9090:9090
+        networks:
+            - monitor-net

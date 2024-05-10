@@ -14,7 +14,7 @@ RUN curl -LO "https://github.com/prometheus/prometheus/releases/download/v${PROM
     && rm ${PROM_FILE}.tar.gz
 
 # Copiar el archivo de configuración de Prometheus (asumimos que ya tienes uno preparado)
-COPY Prometheus.yaml /etc/prometheus/prometheus.yml
+COPY prometheus.yml /etc/prometheus/prometheus.yml
 
 # Exponer el puerto que Prometheus usará
 EXPOSE 9090
