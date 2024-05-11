@@ -1,11 +1,18 @@
-version: '3.7'
+version: '3.8'
 
 networks:
     monitor-net:
         driver: bridge # https://docs.docker.com/network/drivers/
 
-services:
+volumes:
+  # Metrics storage
+  prometheus-data:
+    driver: local
+  # Config files and dashboards configurations
+  grafana-data:
+    driver: local
 
+services:
     # This service scrapes metrics over http on other services and systems
     prometheus:
         image: prom/prometheus:latest
@@ -13,12 +20,14 @@ services:
         restart: unless-stopped
         volumes:
             - ./prometheus.yml:/etc/prometheus/prometheus.yml
+            - prometheus-data:/prometheus
         command:
             - '--config.file=/etc/prometheus/prometheus.yml'
             - '--storage.tsdb.path=/prometheus'
             - '--web.console.libraries=/etc/prometheus/console_libraries'
             - '--web.console.templates=/etc/prometheus/consoles'
             - '--web.enable-lifecycle'
+        # TODO: Para qué el expose?
         expose:
             - 9090
         ports:
@@ -30,9 +39,29 @@ services:
         image: grafana/grafana:latest
         container_name: grafana
         restart: unless-stopped
+        # TODO: Volumenes
+        # TODO: Por qué haria falta el expose?
         expose:
             - 3000
         ports:
             - 3000:3000
         networks:
             - monitor-net
+
+    node-exporter:
+        image: prom/node-exporter:latest
+        container_name: node-exporter
+        restart: unless-stopped
+        volumes:
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+            - /:/rootfs:ro
+        command:
+            - '--path.procfs=/host/proc'
+            - '--path.rootfs=/rootfs'
+            - '--path.sysfs=/host/sys'
+            - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+        expose:
+            - 9100
+        networks:
+            - web-monitor
