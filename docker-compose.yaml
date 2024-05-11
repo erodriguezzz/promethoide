@@ -64,4 +64,4 @@ services:
         expose:
             - 9100
         networks:
-            - web-monitor
+            - monitor-net
