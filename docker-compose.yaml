@@ -39,6 +39,9 @@ services:
         image: grafana/grafana:latest
         container_name: grafana
         restart: unless-stopped
+        volumes:
+            - grafana-data:/var/lib/grafana
+            - ./grafana/provisioning:/etc/grafana/provisioning
         # TODO: Volumenes
         # TODO: Por qué haria falta el expose?
         expose:
