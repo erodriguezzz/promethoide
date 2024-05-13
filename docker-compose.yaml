@@ -36,13 +36,16 @@ services:
             - monitor-net
 
     grafana:
-        image: grafana/grafana:latest
+        image: grafana/grafana-oss:latest
         container_name: grafana
         restart: unless-stopped
         volumes:
+            - ./grafana.ini:/etc/grafana/grafana.ini
             - grafana-data:/var/lib/grafana
-            - ./grafana/provisioning:/etc/grafana/provisioning
-        # TODO: Volumenes
+            # - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+            - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+            - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+            - ./grafana/provisioning/alert-rules:/etc/grafana/provisioning/alert-rules
         # TODO: Por qué haria falta el expose?
         expose:
             - 3000
