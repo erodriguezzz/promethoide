@@ -122,3 +122,14 @@ services:
         networks:
             - monitor-net
         restart: unless-stopped
+
+    nginx:
+        image: nginx:latest
+        container_name: http-server
+        ports:
+            - 8089:80
+        networks:
+            - monitor-net
+        volumes:
+            - ./nginx/html/:/usr/share/nginx/html
+        restart: unless-stopped
