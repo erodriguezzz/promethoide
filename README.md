@@ -34,11 +34,6 @@
 Promethoide es una red virtual desarrollada en Docker con la capacidad de monitorear hosts y servicios dentro de la misma a través de una interfaz visual de Grafana. Algunos de los servicios nativos de la red son:
 ## Prometheus
 Este servicio es el orquestador del monitoreo de todos los otros hosts y servicios. Al estar configurado en docker que todos los contenedores forman parte de la misma red, este servicio gestiona y controla el monitoreo de las métricas de cada uno de ellos y la expone para que desde Grafana se puedan visualizar dashboards de la información recolectada.
-## Servidor SMTP
-Este servicio fue implementado utilizando una imagen de ubuntu a la cual se le configuró un servidor Postfix capaz de gestionar mensajes salientes a través de Gmail. Por el momento, una vez que se inicia el servicio podemos probar su funcionamiento entrando al contenedor y corriendo desde su termianl el comando:
-```sh
-> echo "The body of the mail" | mail -s "Subject" <destino@gmail.com>
-```
 ## API Rest
 La API Rest fue desarrollada en Fast API. Consta de la funcionalidad básica que utilizaría un operario de un peaje para registrar el tránsito que pasa por su cabina. La funcionalidad es muy básica y por el momento no soporta concurrencia. Podría usarse la librería `asyncpg` en lugar de `psycopg2` para que se pueda usar la librería de manera asincrónica.
 ## PostgreSQL
@@ -46,23 +41,23 @@ Este servicio fue levantado para almacenar la información de los operarios del 
 
 ### Comando útiles
 ```bash
-> docker exec -it postgres_container psql -U <postgres_user>
+docker exec -it postgres_container psql -U <postgres_user>
 ```
 ```bash
-> docker exec -it rest_api sh
+docker exec -it rest_api sh
 ```
 ```bash
-> docker rm -f $(docker ps -aq)
+docker rm -f $(docker ps -aq)
 ```
 ```bash
-> docker kill <container_name>
+docker kill <container_name>
 ```
 ```bash
-> docker rmi -f $(docker images -q)
+docker rmi -f $(docker images -q)
 ```
 
 ### Colaboradores
 - [Felipe Cupitó](https://github.com/FelipeCupito) - fcupito@itba.edu.ar
-- [Roberto Franco Rodriguez Tulasne](https://github.com/robrodriguez99) - 
-- [Leonardo Agustín D'Agostino](https://github.com/daguichi)
+- [Roberto Franco Rodriguez Tulasne](https://github.com/robrodriguez99) - robrodriguez@itba.edu.ar
+- [Leonardo Agustín D'Agostino](https://github.com/daguichi) - ldagostino@itba.edu.ar
 - [Leandro Ezequiel Rodriguez](https://github.com/erodriguezzz) - learodriguez@itba.edu.ar
