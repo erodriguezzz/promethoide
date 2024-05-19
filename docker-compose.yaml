@@ -1,4 +1,4 @@
-# version: '3.8'
+version: '3.8'
 
 networks:
     monitor-net:
@@ -79,16 +79,24 @@ services:
             - monitor-net
 
     rest-api:
-        image: python:latest
-        container_name: rest-api
-        restart: unless-stopped
+        image: python:3.10
+        container_name: fastapi_app
+        command: /bin/sh -c "pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 5001"
         volumes:
-            - ./api:/usr/src/app
+            - ./api:/app
+        working_dir: /app
+        environment:
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - POSTGRES_DB=${POSTGRES_DB}
+            - POSTGRES_HOST=${POSTGRES_HOST}
+            - POSTGRES_PORT=${POSTGRES_PORT}
         ports:
-            - 5001:5001
+            - "5001:5001"
+        depends_on:
+            - postgres
         networks:
             - monitor-net
-        command: sh -c "cd /usr/src/app && pip install fastapi && pip install asyncpg && pip install uvicorn && python3 api.py"
 
     postgres:
         image: postgres
@@ -98,6 +106,7 @@ services:
         environment:
             POSTGRES_USER: ${POSTGRES_USER}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: ${POSTGRES_DB}
         ports:
             - 5432:5432
         networks:
@@ -114,3 +123,4 @@ services:
         volumes:
             - ./nginx/html/:/usr/share/nginx/html
         restart: unless-stopped
+
