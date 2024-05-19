@@ -1,51 +1,69 @@
 from fastapi import FastAPI, HTTPException
-from datetime import datetime
-from dotenv import load_dotenv
-import psycopg2
-import os
+from pydantic import BaseModel
+import asyncpg
 
 app = FastAPI()
-env_path = os.path.join(os.path.dirname(__file__),'..','.env')
-load_dotenv(env_path)
 
-def get_client():
-    # Crea un pool de conexiones
-    return psycopg2.connect(
-        user=os.getenv("POSTGRES_USER"),
-        password=os.getenv("POSTGRES_PASSWORD"),
-        database='postgres',
-        host='postgres_container'
-    )
+DATABASE_URL = "postgresql://user:password@localhost/databasename"
 
+class ImmigrationEntry(BaseModel):
+    name: str
+    dni: str
+    lodging: str
+    declared_money: float
+    flight_number: str
 
-def get_price():
-    now = datetime.now()
-    if 6 <= now.hour < 18:
-        return 10
-    else:
-        return 15
+async def init_db():
+    app.state.pool = await asyncpg.create_pool(DATABASE_URL)
 
-@app.get("/price")
-def price():
-    return {"price": get_price()}
+@app.on_event("startup")
+async def startup():
+    await init_db()
 
-@app.post("/sell")
-def sell(data: dict):
-    patent = data["patent"]
+@app.on_event("shutdown")
+async def shutdown():
+    await app.state.pool.close()
 
-    if not patent:
-        raise HTTPException(status_code=400, detail=f"'patent' field is required in request.")
+@app.get("/check_dni/{dni}")
+async def check_dni(dni: str):
+    query = "SELECT * FROM interpol WHERE dni = $1"
+    async with app.state.pool.acquire() as conn:
+        record = await conn.fetchrow(query, dni)
+        if record:
+            raise HTTPException(status_code=400, detail="DNI found in interpol database")
+        return {"message": "DNI not found in interpol database"}
 
-    try:
-        conn = get_client()
-        cur = conn.cursor()
-        cur.execute("INSERT INTO entries (patent, entry_time) VALUES (%s, %s)", (patent, datetime.now()))
-        conn.commit()
-        conn.close()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error while inserting entry in db.")
+@app.get("/check_flight/{flight_number}")
+async def check_flight(flight_number: str):
+    query = "SELECT * FROM flights WHERE flight_number = $1"
+    async with app.state.pool.acquire() as conn:
+        record = await conn.fetchrow(query, flight_number)
+        if not record:
+            raise HTTPException(status_code=404, detail="Flight not found")
+        return {"message": "Flight found", "flight": dict(record)}
 
-    return {"message": "Entry registered correctly"}
+@app.post("/immigration_entry")
+async def create_immigration_entry(entry: ImmigrationEntry):
+    await check_dni(entry.dni)
+    await check_flight(entry.flight_number)
+    
+    if not entry.lodging:
+        raise HTTPException(status_code=400, detail="Lodging cannot be null")
+    
+    if entry.declared_money < 500:  # let's assume 500 is the minimum required amount
+        raise HTTPException(status_code=400, detail="Insufficient declared money")
+
+    query = """
+    INSERT INTO immigration (name, dni, lodging, declared_money)
+    VALUES ($1, $2, $3, $4)
+    RETURNING id
+    """
+    async with app.state.pool.acquire() as conn:
+        try:
+            await conn.execute(query, entry.name, entry.dni, entry.lodging, entry.declared_money)
+        except asyncpg.UniqueViolationError:
+            raise HTTPException(status_code=400, detail="DNI already exists in immigration records")
+        return {"message": "Immigration entry created successfully"}
 
 if __name__ == "__main__":
     import uvicorn

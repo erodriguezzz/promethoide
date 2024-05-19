@@ -88,7 +88,7 @@ services:
             - 5001:5001
         networks:
             - monitor-net
-        command: sh -c "cd /usr/src/app && pip install fastapi && pip install psycopg2 && pip install uvicorn && python3 api.py"
+        command: sh -c "cd /usr/src/app && pip install fastapi && pip install asyncpg && pip install uvicorn && python3 api.py"
 
     postgres:
         image: postgres
@@ -100,25 +100,6 @@ services:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         ports:
             - 5432:5432
-        networks:
-            - monitor-net
-        restart: unless-stopped
-
-    smtp-server:
-        container_name: smtp-server
-        build:
-            context: ./smtp-server
-            args:
-                - EMAIL=${EMAIL}
-                - EMAIL_PASSWORD=${EMAIL_PASSWORD}
-                - PORT=${PORT}
-                - MAIL_NAME=${MAIL_NAME}
-                - SMTP_DOMAIN=${SMTP_DOMAIN}
-                - SMTP_PORT=${SMTP_PORT}
-        expose:
-            - 25
-        ports:
-            - 25:25
         networks:
             - monitor-net
         restart: unless-stopped
