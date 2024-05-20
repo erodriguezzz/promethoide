@@ -80,6 +80,7 @@ services:
     rest-api:
         image: python:3.10
         container_name: rest-api
+        restart: unless-stopped
         command: /bin/sh -c "pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 5001"
         volumes:
             - ./api:/app

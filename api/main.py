@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import asyncpg
 from dotenv import load_dotenv
 from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
+from pydantic import BaseModel, Field
 
 # Cargar las variables del archivo .env
 load_dotenv()
@@ -18,7 +19,7 @@ POSTGRES_HOST = os.getenv("POSTGRES_HOST")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
 
 DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
-print(DATABASE_URL)
+
 
 REQUEST_COUNT = Counter("requests_total", "Total number of requests received")
 ENTRY_CREATED_COUNT = Counter("entry_created_total", "Total number of immigration entries created")
@@ -26,11 +27,11 @@ DNI_FOUND_COUNT = Counter("dni_found_total", "Total number of DNIs found in inte
 FLIGHT_FOUND_COUNT = Counter("flight_found_total", "Total number of flights found")
 
 class ImmigrationEntry(BaseModel):
-    name: str
-    dni: str
-    lodging: str
-    declared_money: float
-    flight_number: str
+    name: str = Field(..., example="John Doe")
+    dni: str = Field(..., example="12345678A")
+    lodging: str = Field(..., example="Hotel Example")
+    declared_money: float = Field(..., example=1000.0)
+    flight_number: str = Field(..., example="AA1234")
 
 async def init_db():
     app.state.pool = await asyncpg.create_pool(DATABASE_URL)
@@ -43,7 +44,8 @@ async def startup():
 async def shutdown():
     await app.state.pool.close()
 
-@app.get("/check_dni/{dni}")
+
+@app.get("/dni/{dni_number}")
 async def check_dni(dni: str):
     REQUEST_COUNT.inc()
     query = "SELECT * FROM interpol WHERE dni = $1"
