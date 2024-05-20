@@ -1,8 +1,9 @@
 import os
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel
 import asyncpg
 from dotenv import load_dotenv
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 
 # Cargar las variables del archivo .env
 load_dotenv()
@@ -18,6 +19,11 @@ POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
 
 DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 print(DATABASE_URL)
+
+REQUEST_COUNT = Counter("requests_total", "Total number of requests received")
+ENTRY_CREATED_COUNT = Counter("entry_created_total", "Total number of immigration entries created")
+DNI_FOUND_COUNT = Counter("dni_found_total", "Total number of DNIs found in interpol database")
+FLIGHT_FOUND_COUNT = Counter("flight_found_total", "Total number of flights found")
 
 class ImmigrationEntry(BaseModel):
     name: str
@@ -39,24 +45,29 @@ async def shutdown():
 
 @app.get("/check_dni/{dni}")
 async def check_dni(dni: str):
+    REQUEST_COUNT.inc()
     query = "SELECT * FROM interpol WHERE dni = $1"
     async with app.state.pool.acquire() as conn:
         record = await conn.fetchrow(query, dni)
-        if record:
-            raise HTTPException(status_code=400, detail="DNI found in interpol database")
-        return {"message": "DNI not found in interpol database"}
+        if not record:
+            return {"message": "DNI not found in interpol database"}
+        DNI_FOUND_COUNT.inc()
+        raise HTTPException(status_code=409, detail="DNI found in interpol database") # TODO: verify status code
 
 @app.get("/check_flight/{flight_number}")
 async def check_flight(flight_number: str):
+    REQUEST_COUNT.inc()
     query = "SELECT * FROM flights WHERE flight_number = $1"
     async with app.state.pool.acquire() as conn:
         record = await conn.fetchrow(query, flight_number)
         if not record:
             raise HTTPException(status_code=404, detail="Flight not found")
+        FLIGHT_FOUND_COUNT.inc()
         return {"message": "Flight found", "flight": dict(record)}
 
 @app.post("/immigration_entry")
 async def create_immigration_entry(entry: ImmigrationEntry):
+    REQUEST_COUNT.inc()
     await check_dni(entry.dni)
     await check_flight(entry.flight_number)
     
@@ -74,9 +85,15 @@ async def create_immigration_entry(entry: ImmigrationEntry):
     async with app.state.pool.acquire() as conn:
         try:
             await conn.execute(query, entry.name, entry.dni, entry.lodging, entry.declared_money)
+            ENTRY_CREATED_COUNT.inc()
         except asyncpg.UniqueViolationError:
             raise HTTPException(status_code=400, detail="DNI already exists in immigration records")
         return {"message": "Immigration entry created successfully"}
+
+@app.get("/metrics")
+async def metrics():
+    data = generate_latest()
+    return Response(content=data, status_code=200, headers={"Content-Type": CONTENT_TYPE_LATEST})
 
 if __name__ == "__main__":
     import uvicorn

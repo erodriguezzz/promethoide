@@ -3,3 +3,4 @@ asyncpg
 pydantic
 python-dotenv
 uvicorn
+prometheus_client
