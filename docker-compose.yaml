@@ -19,7 +19,7 @@ services:
         container_name: prometheus
         restart: unless-stopped
         volumes:
-            - ./prometheus.yml:/etc/prometheus/prometheus.yml
+            - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
             - prometheus-data:/prometheus
         command:
             - '--config.file=/etc/prometheus/prometheus.yml'
@@ -40,9 +40,8 @@ services:
         container_name: grafana
         restart: unless-stopped
         volumes:
-            - ./grafana.ini:/etc/grafana/grafana.ini
             - grafana-data:/var/lib/grafana
-            # - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+            - ./grafana/grafana.ini:/etc/grafana/grafana.ini
             - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
             - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
             - ./grafana/provisioning/alert-rules:/etc/grafana/provisioning/alert-rules
@@ -100,7 +99,7 @@ services:
 
     postgres:
         image: postgres
-        container_name: postgres_container
+        container_name: postgres
         volumes:
             - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
         environment:
