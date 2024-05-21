@@ -4,3 +4,4 @@ __pycache__/
 .DS_Store
 api/.idea/
 api/.__pycache__/
+.vscode/
