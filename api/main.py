@@ -1,5 +1,4 @@
 import os
-import uvicorn
 import time
 from fastapi import FastAPI, HTTPException, Response, Depends, Request, status
 from fastapi.responses import JSONResponse
@@ -23,12 +22,25 @@ POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
 DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
 # Defining Prometheus metrics
-REQUEST_COUNT = Counter("requests_total", "Total number of requests received")
-ENTRY_CREATED_COUNT = Counter("entry_created_total", "Total number of immigration entries created")
-DNI_FOUND_COUNT = Counter("dni_found_total", "Total number of DNIs found in interpol database")
-FLIGHT_FOUND_COUNT = Counter("flight_found_total", "Total number of flights found")
-REQUEST_LATENCY = Histogram("request_latency", "Latency of HTTP requests in seconds", ["method", "endpoint"])
-ERROR_COUNT = Counter("error_count", "Count of errors encountered", ["endpoint", "method", "type"])
+REQUEST_COUNT = Counter("rest_api_requests_total", "Total number of requests received")
+REQUEST_DNI_COUNT = Counter("rest_api_requests_dni_total", "Total number of requests to /dni")
+REQUEST_FLIGHT_COUNT = Counter("rest_api_requests_flight_total", "Total number of requests to /flights")
+REQUEST_ENTRY_COUNT = Counter("rest_api_requests_immigration_total", "Total number of requests to /immigration")
+
+ENTRY_CREATED_COUNT = Counter("rest_api_entry_created_total", "Total number of immigration entries created")
+DNI_FOUND_COUNT = Counter("rest_api_dni_found_total", "Total number of DNIs found in interpol database")
+FLIGHT_FOUND_COUNT = Counter("rest_api_flight_found_total", "Total number of flights found")
+
+SERVER_ERROR_COUNT = Counter("rest_api_server_error_count", "Count of errors encountered", ["endpoint"])
+CLIENT_ERROR_COUNT = Counter("rest_api_client_error_count", "Count of errors encountered", ["endpoint"])
+
+REQUEST_LATENCY = Histogram(
+    "rest_api_request_latency",
+    "Latency of HTTP requests in seconds",
+    ["endpoint"],
+    buckets=[0.050, 0.100, 0.150, 0.200, 0.250, 0.300, 0.350, 0.400, 0.450, 0.500, 0.550, 0.600, 0.650, 0.700, 0.750,
+             0.800, 0.850, 0.900, 0.950, 1.0]
+)
 
 
 class ImmigrationEntry(BaseModel):
@@ -52,19 +64,24 @@ async def startup():
     app.state.pool = await asyncpg.create_pool(DATABASE_URL)
 
 
+# Handle HttpExceptions
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
-    ERROR_COUNT.labels(request.url.path, request.method,"client_error" if exc.status_code < 500 else "server_error").inc()
+    if exc.status_code < 500:
+        CLIENT_ERROR_COUNT.labels(request.scope['route'].name).inc()
+    else:
+        SERVER_ERROR_COUNT.labels(request.scope['route'].name).inc()
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail},
     )
 
 
+# Handle general exceptions
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):
     # Only count this as a server error
-    ERROR_COUNT.labels(request.url.path, request.method, "server_error").inc()
+    SERVER_ERROR_COUNT.labels(request.scope['route'].name).inc()
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"detail": "Internal server error"},
@@ -83,9 +100,7 @@ async def add_prometheus_metrics(request: Request, call_next):
     response = await call_next(request)
 
     process_time = time.time() - start_time
-    print(f"Processing time: {process_time}")
-    print(f"Request: {request.method} {request.url.path}")
-    REQUEST_LATENCY.labels(request.method, request.url.path).observe(process_time)
+    REQUEST_LATENCY.labels(request.scope['route'].name).observe(process_time)
 
     REQUEST_COUNT.inc()
     return response
@@ -93,6 +108,9 @@ async def add_prometheus_metrics(request: Request, call_next):
 
 @app.get("/dni/{dni_number}")
 async def check_dni(dni_number: str, pool=Depends(db_pool)):
+    #Increment the counter
+    REQUEST_DNI_COUNT.inc()
+    
     query = "SELECT * FROM interpol WHERE dni = $1"
     async with pool.acquire() as conn:
         record = await conn.fetchrow(query, dni_number)
@@ -104,6 +122,9 @@ async def check_dni(dni_number: str, pool=Depends(db_pool)):
 
 @app.get("/flights/{flight_number}")
 async def check_flight(flight_number: str, pool=Depends(db_pool)):
+    #Increment the counter
+    REQUEST_FLIGHT_COUNT.inc()
+    
     query = "SELECT * FROM flights WHERE flight_number = $1"
     async with pool.acquire() as conn:
         record = await conn.fetchrow(query, flight_number)
@@ -115,6 +136,9 @@ async def check_flight(flight_number: str, pool=Depends(db_pool)):
 
 @app.post("/immigration", status_code=201)
 async def create_immigration_entry(entry: ImmigrationEntry, pool=Depends(db_pool)):
+    #Increment the counter
+    REQUEST_ENTRY_COUNT.inc()
+    
     # Check if DNI is in interpol database
     try:
         await check_dni(entry.dni, pool)
@@ -154,6 +178,3 @@ async def metrics():
     data = generate_latest()
     return Response(content=data, status_code=200, headers={"Content-Type": CONTENT_TYPE_LATEST})
 
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=5001, reload=True)
