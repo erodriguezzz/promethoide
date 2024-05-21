@@ -4,4 +4,4 @@ pydantic
 python-dotenv
 uvicorn
 prometheus_client
-pydantic
+locust
