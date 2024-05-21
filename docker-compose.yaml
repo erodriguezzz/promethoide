@@ -42,13 +42,13 @@ services:
         volumes:
             - grafana-data:/var/lib/grafana
             - ./grafana/grafana.ini:/etc/grafana/grafana.ini
-            - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-            - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-            - ./grafana/provisioning/alert-rules:/etc/grafana/provisioning/alert-rules
+            - ./grafana/provisioning:/etc/grafana/provisioning
         # TODO: Por qué haria falta el expose?
         environment:
             - GF_SMTP_ENABLED=true
-            - GF_SMTP_HOST=smtp-server:25
+            - GF_SMTP_HOST=${GR_SMTP_HOST}
+            - GF_SMTP_USER=${GF_SMTP_FROM_ADDRESS}
+            - GF_SMTP_PASSWORD=${GF_SMTP_PASSWORD}
             - GF_SMTP_FROM_ADDRESS=${GF_SMTP_FROM_ADDRESS}
             - GF_SMTP_FROM_NAME=${GF_SMTP_FROM_NAME}
             - GF_SMTP_SKIP_VERIFY=true
