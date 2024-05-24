@@ -11,10 +11,18 @@
 
 <body>
     <h1>Customs Agent Dashboard</h1>
+
     <div class="form-container">
-        <form id="entryForm">
+        <form id="interpolForm">
             <label for="dni">DNI:</label>
             <input type="text" id="dni" name="dni" required>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="interpolMessage"></div>
+    </div>
+
+    <div class="form-container">
+        <form id="entryForm">
             <label for="flight_number">Flight Number:</label>
             <input type="text" id="flight_number" name="flight_number" required>
 

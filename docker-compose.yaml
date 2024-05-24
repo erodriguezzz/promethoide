@@ -7,11 +7,11 @@ networks:
 
 volumes:
   # Metrics storage
-  prometheus-data:
-    driver: local
+    prometheus-data:
+        driver: local
   # Config files and dashboards configurations
-  grafana-data:
-    driver: local
+    grafana-data:
+        driver: local
 
 services:
     # This service scrapes metrics over http on other services and systems

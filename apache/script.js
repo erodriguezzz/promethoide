@@ -1,17 +1,10 @@
 document.getElementById('entryForm').addEventListener('submit', async function (event) {
     event.preventDefault();
-    const dni = document.getElementById('dni').value;
     const flightNumber = document.getElementById('flight_number').value;
     const lodging = document.getElementById('lodging').value;
     const declaredMoney = document.getElementById('declared_money').value;
 
     try {
-        const dniResponse = await fetch(`http://localhost:8080/api/dni/${dni}`);
-        if (dniResponse.status === 200) {
-            document.getElementById('message').innerText = 'DNI found in interpol database. Entry cannot be created.';
-            return;
-        }
-
         const flightResponse = await fetch(`http://localhost:8080/api/flights/${flightNumber}`);
         if (flightResponse.status !== 200) {
             document.getElementById('message').innerText = 'Flight not found. Entry cannot be created.';
@@ -42,4 +35,23 @@ document.getElementById('entryForm').addEventListener('submit', async function (
     } catch (error) {
         document.getElementById('message').innerText = `Error: ${error.message}`;
     }
+});
+
+document.getElementById('interpolForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const dni = document.getElementById('dni').value;
+    try {
+        const dniResponse = await fetch(`http://localhost:8080/api/dni/${dni}`);
+        if (dniResponse.status === 200) {
+            document.getElementById('interpolMessage').innerText = 'DNI found in interpol database. Entry cannot be created.';
+            return;
+        }
+
+        if(dniResponse.status = 200) {
+            document.getElementById('interpolMessage').innerText = "Criminal Found.";
+        }
+    } catch (error) {
+        document.getElementById('interpolMessage').innerText = `Error ${error.message}`;
+    }
+
 });
