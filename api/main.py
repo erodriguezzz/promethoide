@@ -139,14 +139,6 @@ async def create_immigration_entry(entry: ImmigrationEntry, pool=Depends(db_pool
     #Increment the counter
     REQUEST_ENTRY_COUNT.inc()
     
-    # Check if DNI is in interpol database
-    try:
-        await check_dni(entry.dni, pool)
-        raise HTTPException(status_code=400, detail="DNI found in interpol database")
-    except HTTPException as e:
-        if e.status_code != 404:
-            raise e
-
     # Check if flight exists     
     await check_flight(entry.flight_number, pool)
 

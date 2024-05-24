@@ -18,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
   "links": [],
   "panels": [
     {
@@ -107,14 +106,14 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "increase(rest_api_requests_total[$__rate_interval])",
+          "expr": "rest_api_requests_total - (rest_api_requests_total offset $__rate_interval)",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
           "legendFormat": "Request Total",
           "range": true,
-          "refId": "B",
+          "refId": "TOTAL_REQ",
           "useBackend": false
         },
         {
@@ -123,12 +122,12 @@
             "uid": "PC68CF569CB931581"
           },
           "editorMode": "code",
-          "expr": "increase(rest_api_requests_dni_total[$__rate_interval])",
+          "expr": "rest_api_requests_dni_total - (rest_api_requests_dni_total offset $__rate_interval)",
           "hide": false,
           "instant": false,
           "legendFormat": "Requests to /dni",
           "range": true,
-          "refId": "A"
+          "refId": "TOTAL_DNI_REQ"
         },
         {
           "datasource": {
@@ -136,12 +135,12 @@
             "uid": "PC68CF569CB931581"
           },
           "editorMode": "code",
-          "expr": "increase(rest_api_requests_flight_total[$__rate_interval])",
+          "expr": "rest_api_requests_flight_total - (rest_api_requests_flight_total offset $__rate_interval)",
           "hide": false,
           "instant": false,
           "legendFormat": "Requests to /flights",
           "range": true,
-          "refId": "C"
+          "refId": "TOTAL_FLIGHT_REQ"
         },
         {
           "datasource": {
@@ -149,12 +148,12 @@
             "uid": "PC68CF569CB931581"
           },
           "editorMode": "code",
-          "expr": "increase(rest_api_requests_immigration_total[$__rate_interval])",
+          "expr": "rest_api_requests_immigration_total - (rest_api_requests_immigration_total offset $__rate_interval)",
           "hide": false,
           "instant": false,
           "legendFormat": "Requests to /immigration",
           "range": true,
-          "refId": "D"
+          "refId": "TOTAL_IMMIGRATION_REQ"
         }
       ],
       "title": "Number of requests",
@@ -288,8 +287,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -710,6 +708,6 @@
   "timezone": "browser",
   "title": "Rest-api",
   "uid": "fdmbclfdy4g00b",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
