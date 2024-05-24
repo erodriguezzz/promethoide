@@ -131,7 +131,7 @@ services:
 
     apache:
         build: ./apache
-        container_name: apache_server
+        container_name: apache
         ports:
             - "8080:80"
         networks:
@@ -150,3 +150,18 @@ services:
             - services-net
         command:
             - '--scrape_uri=http://apache_server:80/server-status?auto'
+            
+    blackbox-exporter:
+        image: prom/blackbox-exporter:latest
+        container_name: blackbox-exporter
+        restart: unless-stopped
+        volumes:
+            - ./blackbox/blackbox.yml:/config/blackbox.yml
+        command:
+            - '--config.file=/config/blackbox.yml'
+        expose:
+            - 9115
+        ports:
+            - 9115:9115 
+        networks:
+            - services-net

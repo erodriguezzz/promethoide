@@ -106,6 +106,11 @@ async def add_prometheus_metrics(request: Request, call_next):
     return response
 
 
+@app.get("/")
+async def read_root():
+    return {"message": "hello world", "status": "ok"}
+
+
 @app.get("/dni/{dni_number}")
 async def check_dni(dni_number: str, pool=Depends(db_pool)):
     #Increment the counter
