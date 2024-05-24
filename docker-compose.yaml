@@ -115,3 +115,12 @@ services:
         networks:
             - services-net
         restart: unless-stopped
+
+    apache:
+        build: ./apache
+        container_name: apache_server
+        ports:
+            - "8080:80"
+        networks:
+            - monitor-net
+        restart: unless-stopped
