@@ -116,6 +116,19 @@ services:
             - services-net
         restart: unless-stopped
 
+    postgres-exporter:
+        image: quay.io/prometheuscommunity/postgres-exporter
+        container_name: postgres-exporter
+        restart: unless-stopped
+        environment:
+            - DATA_SOURCE_NAME=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+        expose:
+            - 9187
+        ports:
+            - 9187:9187
+        networks:
+            - services-net
+
     apache:
         build: ./apache
         container_name: apache_server
