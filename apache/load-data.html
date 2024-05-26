@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load Flight Data</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>Load Flight Data</h1>
+    <form id="flightForm">
+        <label for="flight_number">Flight Number:</label>
+        <input type="text" id="flight_number" name="flight_number" required>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="flightMessage"></div>
+    <button id="next-step-load-viajero" onclick="nextStep('/load-viajero', getDniFromUrl())">Next</button>
+    <script src="script.js"></script>
+</body>
+
+</html>

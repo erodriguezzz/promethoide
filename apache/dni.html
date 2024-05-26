@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNI Check</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>DNI Check</h1>
+    <form id="interpolForm">
+        <label for="dni">DNI:</label>
+        <input type="text" id="dni" name="dni" required>
+        <button type="submit">Submit</button>
+    </form>
+    <div id="interpolMessage"></div>
+    <button id="next-step-load-data" style="display: none;"
+        onclick="nextStep('/load-data', document.getElementById('dni').value)">
+        Next
+    </button>
+    <script src="script.js"></script>
+</body>
+
+</html>
