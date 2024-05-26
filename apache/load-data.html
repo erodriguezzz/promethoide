@@ -16,7 +16,11 @@
         <button type="submit">Submit</button>
     </form>
     <div id="flightMessage"></div>
-    <button id="next-step-load-viajero" onclick="nextStep('/load-viajero', getDniFromUrl())">Next</button>
+    <button id="next-step-load-viajero" style="display: none;" onclick="
+        nextStepDniFlight(
+            '/load-viajero', getDniFromUrl(), document.getElementById('flight_number').value)">
+        Next
+    </button>
     <script src="script.js"></script>
 </body>
 
