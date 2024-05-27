@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página con Simulación de Latencia</title>
+</head>
+<body>
+    <h1>Simulación de Latencia</h1>
+    <button onclick="fetchData()">Hacer Petición</button>
+    <div id="response"></div>
+
+    <script>
+        function fetchData() {
+            document.getElementById('response').innerText = 'Cargando...';
+            
+            fetch('/api/delay')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('response').innerText = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('response').innerText = 'Error: ' + error;
+                });
+        }
+    </script>
+</body>
+</html>

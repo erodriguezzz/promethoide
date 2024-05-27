@@ -154,7 +154,7 @@ groups:
               datasourceUid: PC68CF569CB931581
               model:
                 editorMode: code
-                expr: rest_api_request_latency_bucket{le="+Inf", endpoint="check_flights"}
+                expr: rest_api_request_latency_bucket{le="+Inf", endpoint="check_flight"}
                 instant: true
                 intervalMs: 1000
                 legendFormat: __auto
@@ -171,7 +171,7 @@ groups:
                     type: prometheus
                     uid: PC68CF569CB931581
                 editorMode: code
-                expr: rest_api_request_latency_bucket{le="0.2", endpoint="check_flights"}
+                expr: rest_api_request_latency_bucket{le="0.2", endpoint="check_flight"}
                 instant: true
                 intervalMs: 1000
                 legendFormat: __auto

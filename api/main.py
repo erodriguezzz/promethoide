@@ -169,6 +169,11 @@ async def create_immigration_entry(entry: ImmigrationEntry, pool=Depends(db_pool
         except asyncpg.UniqueViolationError:
             raise HTTPException(status_code=400, detail="DNI already exists in immigration records")
 
+@app.get("/delay")
+async def delay():
+    time.sleep(5)
+    return "Delayed"
+
 
 @app.get("/metrics")
 async def metrics():

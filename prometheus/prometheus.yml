@@ -29,7 +29,8 @@ scrape_configs:
     static_configs:
       - targets:
         - http://apache:80
-        - http://rest-api:5001 
+        - http://rest-api:5001
+        - http://apache:80/delay
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
