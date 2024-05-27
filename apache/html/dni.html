@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DNI Check</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
-
 <body>
     <h1>DNI Check</h1>
     <form id="interpolForm">
@@ -17,10 +15,9 @@
     </form>
     <div id="interpolMessage"></div>
     <button id="next-step-load-data" style="display: none;"
-        onclick="nextStep('/load-data', document.getElementById('dni').value)">
+        onclick="nextStep('load-data.html', document.getElementById('dni').value)">
         Next
     </button>
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
-
 </html>

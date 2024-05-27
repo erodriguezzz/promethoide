@@ -11,7 +11,7 @@ RUN echo "LoadModule proxy_module modules/mod_proxy.so" >> /usr/local/apache2/co
     && echo "Include conf/extra/proxy.conf" >> /usr/local/apache2/conf/httpd.conf
 
 # Copy files
-COPY . /usr/local/apache2/htdocs/
+COPY ./html/ /usr/local/apache2/htdocs/
 
 # Copy delay script
 COPY delay.sh /usr/local/apache2/cgi-bin/
