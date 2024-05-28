@@ -22,7 +22,6 @@ scrape_configs:
         - targets: ['postgres-exporter:9187']
  
   - job_name: 'blackbox-exporter'
-    # scheme: http
     metrics_path: /probe
     params:
       module: [http_2xx]  # Look for a HTTP 200 response.
