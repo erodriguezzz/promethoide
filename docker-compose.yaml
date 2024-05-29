@@ -149,7 +149,7 @@ services:
         networks:
             - services-net
         command:
-            - '--scrape_uri=http://apache_server:80/server-status?auto'
+            - '--scrape_uri=http://apache:80/server-status?auto'
             
     blackbox-exporter:
         image: prom/blackbox-exporter:latest
@@ -165,3 +165,22 @@ services:
             - 9115:9115 
         networks:
             - services-net
+
+    pushgateway:
+        # https://github.com/prometheus/pushgateway
+        image: prom/pushgateway:latest
+        container_name: pushgateway
+        restart: unless-stopped
+        ports:
+        - 9091:9091
+        networks:
+        - services-net
+
+    k6:
+        build: ./k6-cron
+        container_name: k6
+        restart: unless-stopped
+        environment:
+        - PROMETHEUS_PUSHGATEWAY_URL=http://pushgateway:9091
+        networks:
+        - services-net
