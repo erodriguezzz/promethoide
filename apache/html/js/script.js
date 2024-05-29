@@ -78,7 +78,8 @@ document.getElementById('travelerForm')?.addEventListener('submit', async functi
                 dni: dni,
                 lodging: lodging,
                 declared_money: declaredMoney,
-                flight_number: flightNumber
+                flight_number: flightNumber,
+                smoke: false
             })
         });
 
