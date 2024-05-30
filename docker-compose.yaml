@@ -162,7 +162,7 @@ services:
         expose:
             - 9115
         ports:
-            - 9115:9115 
+            - 9115:9115
         networks:
             - services-net
 
@@ -172,15 +172,17 @@ services:
         container_name: pushgateway
         restart: unless-stopped
         ports:
-        - 9091:9091
+            - 9091:9091
         networks:
-        - services-net
+            - services-net
 
     k6:
         build: ./k6-cron
         container_name: k6
         restart: unless-stopped
         environment:
-        - PROMETHEUS_PUSHGATEWAY_URL=http://pushgateway:9091
+            - PROMETHEUS_PUSHGATEWAY_URL=http://pushgateway:9091
+        depends_on:
+            - apache
         networks:
-        - services-net
+            - services-net
