@@ -176,13 +176,21 @@ services:
         networks:
             - services-net
 
+    pycron-base:
+        build: ./k6-pycron/lib/pycron
+        image: pycron-image
+        container_name: pycron-base
+        command: ["exit"] # Asegura que el contenedor se detenga inmediatamente después de la construcción
+
     k6:
-        build: ./k6-cron
+        build: ./k6-pycron
         container_name: k6
         restart: unless-stopped
         environment:
             - PROMETHEUS_PUSHGATEWAY_URL=http://pushgateway:9091
         depends_on:
+            - pycron-base
             - apache
         networks:
             - services-net
+

@@ -1,0 +1,4 @@
+tasks:
+  - command: '/usr/local/bin/k6 run /scripts/web_workflow_test.js'
+    interval: "1m"
+

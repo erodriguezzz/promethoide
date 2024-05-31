@@ -1,0 +1,5 @@
+tasks:
+  - command: "echo 'buenas'"
+    interval: "30s"
+  - command: "echo 'Hello, World!'"
+    interval: "58s"
