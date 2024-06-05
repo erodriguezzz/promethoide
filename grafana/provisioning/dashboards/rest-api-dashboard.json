@@ -18,7 +18,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
   "links": [],
   "panels": [
     {
@@ -95,6 +94,7 @@
           "showLegend": true
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
@@ -211,7 +211,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -238,106 +238,108 @@
         "y": 8
       },
       "id": 10,
-      "panels": [],
-      "title": "Interpol Metrics",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PC68CF569CB931581"
-      },
-      "description": "The amount of criminals from Interpol database found up to now.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "Criminals Found",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 3,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "displayName": "Amount of criminals found",
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 9
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "targets": [
+      "panels": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "PC68CF569CB931581"
           },
-          "editorMode": "code",
-          "expr": "sum_over_time(rest_api_dni_found_total[$__interval])",
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
+          "description": "The amount of criminals from Interpol database found up to now.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "Criminals Found",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 3,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "displayName": "Amount of criminals found",
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 9
+          },
+          "id": 8,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "maxHeight": 600,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "PC68CF569CB931581"
+              },
+              "editorMode": "code",
+              "expr": "sum_over_time(rest_api_dni_found_total[$__interval])",
+              "instant": false,
+              "legendFormat": "__auto",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Wanted Criminals Found",
+          "type": "timeseries"
         }
       ],
-      "title": "Wanted Criminals Found",
-      "type": "timeseries"
+      "title": "Interpol Metrics",
+      "type": "row"
     },
     {
       "collapsed": false,
@@ -345,7 +347,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 9
       },
       "id": 9,
       "panels": [],
@@ -376,7 +378,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 10
       },
       "id": 1,
       "options": {
@@ -407,6 +409,7 @@
           "value": "Number of request"
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "multi",
           "showColorScale": false,
           "yHistogram": true
@@ -418,21 +421,25 @@
           "unit": "ms"
         }
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "PC68CF569CB931581"
           },
+          "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": true,
-          "expr": "rest_api_request_latency_bucket{endpoint=~\"check_flight|check_dni|create_immigration_entry\"}",
+          "expr": "rest_api_request_latency_bucket{endpoint=~\"check_flight|check_dni|create_immigration_entry\"} - (rest_api_request_latency_bucket{endpoint=~\"check_flight|check_dni|create_immigration_entry\"} offset $__rate_interval)",
           "format": "heatmap",
+          "fullMetaSearch": false,
+          "includeNullMetadata": false,
           "instant": false,
           "legendFormat": "{{le}}",
           "range": true,
-          "refId": "A"
+          "refId": "A",
+          "useBackend": false
         }
       ],
       "title": "API Latency Distribution",
@@ -462,12 +469,12 @@
         "h": 10,
         "w": 8,
         "x": 0,
-        "y": 30
+        "y": 22
       },
       "id": 3,
       "options": {
         "calculate": false,
-        "cellGap": 6,
+        "cellGap": 2,
         "color": {
           "exponent": 0.4,
           "fill": "dark-green",
@@ -493,6 +500,7 @@
           "value": "Number of request"
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "showColorScale": false,
           "yHistogram": true
@@ -503,7 +511,7 @@
           "unit": "ms"
         }
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -512,7 +520,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "rest_api_request_latency_bucket{endpoint=~\"check_flight\"}",
+          "expr": "rest_api_request_latency_bucket{endpoint=~\"check_flight\"} - (rest_api_request_latency_bucket{endpoint=~\"check_flight\"} offset $__rate_interval)",
           "format": "heatmap",
           "instant": false,
           "legendFormat": "{{le}}",
@@ -547,12 +555,12 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 30
+        "y": 22
       },
       "id": 4,
       "options": {
         "calculate": false,
-        "cellGap": 6,
+        "cellGap": 2,
         "color": {
           "exponent": 0.4,
           "fill": "dark-green",
@@ -578,6 +586,7 @@
           "value": "Number of request"
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "showColorScale": false,
           "yHistogram": true
@@ -588,7 +597,7 @@
           "unit": "ms"
         }
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -597,7 +606,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "rest_api_request_latency_bucket{endpoint=~\"create_immigration_entry\"}",
+          "expr": "rest_api_request_latency_bucket{endpoint=~\"create_immigration_entry\"} - (rest_api_request_latency_bucket{endpoint=~\"create_immigration_entry\"} offset $__rate_interval)",
           "format": "heatmap",
           "instant": false,
           "legendFormat": "{{le}}",
@@ -632,12 +641,12 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 30
+        "y": 22
       },
       "id": 2,
       "options": {
         "calculate": false,
-        "cellGap": 6,
+        "cellGap": 2,
         "color": {
           "exponent": 0.4,
           "fill": "dark-green",
@@ -663,6 +672,7 @@
           "value": "Number of request"
         },
         "tooltip": {
+          "maxHeight": 600,
           "mode": "single",
           "showColorScale": false,
           "yHistogram": true
@@ -673,7 +683,7 @@
           "unit": "ms"
         }
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.0.0",
       "targets": [
         {
           "datasource": {
@@ -682,7 +692,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "rest_api_request_latency_bucket{endpoint=~\"check_dni\"}",
+          "expr": "rest_api_request_latency_bucket{endpoint=~\"check_dni\"} - (rest_api_request_latency_bucket{endpoint=~\"check_dni\"} offset $__rate_interval)",
           "format": "heatmap",
           "instant": false,
           "legendFormat": "{{le}}",
@@ -701,9 +711,10 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-15m",
     "to": "now"
   },
+  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {},
   "timezone": "browser",
   "title": "Rest-api",
