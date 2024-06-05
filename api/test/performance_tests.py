@@ -4,14 +4,13 @@ from locust import HttpUser, TaskSet, task, between, LoadTestShape
 
 interpol_data_dni = ['12345678A', '87654321B', '23456789C', '34567890D', '45678901E']
 
-
-def generate_valid_dni() -> str:
-    # Generate a random DNI that is not in interpol database
-    # We're Assuming that always will be a valid DNI
-    unique_dni = f"{random.randint(10000000, 99999999)}{random.choice('ABCDEF')}"
-    if unique_dni in interpol_data_dni:
-        return generate_valid_dni()
-    return unique_dni
+# def generate_valid_dni() -> str:
+#     # Generate a random DNI that is not in interpol database
+#     # We're Assuming that always will be a valid DNI
+#     unique_dni = f"{random.randint(10000000, 99999999)}{random.choice('ABCDEF')}"
+#     if unique_dni in interpol_data_dni:
+#         return generate_valid_dni()
+#     return unique_dni
 
 
 class ImmigrationTest(TaskSet):
@@ -38,32 +37,16 @@ class ImmigrationTest(TaskSet):
 
     @task
     def create_immigration_entry(self):
-        # Generate a random entry that is either valid or invalid
-        valid_entry_data = {
+        entry = {
             "name": "John Doe test",
-            "dni": generate_valid_dni(),  # Use a DNI not in interpol to be considered valid for this entry
+            "dni": "1234567890",
             "lodging": "Hotel Example",
             "declared_money": 1000.0,
-            "flight_number": "AA123"
+            "flight_number": "AA123",
+            "smoke": "true"
         }
 
-        # Varying the validity by changing certain fields
-        invalid_entries = [
-            {"name": "Jane Smith", "dni": "12345678A", "lodging": "Hotel Example", "declared_money": 1000.0,
-             "flight_number": "AA123"},  # DNI in interpol
-            {"name": "Carlos Hernandez", "dni": "23456789C", "lodging": "", "declared_money": 1000.0,
-             "flight_number": "AA123"},  # No lodging
-            {"name": "Maria Garcia", "dni": "34567890D", "lodging": "Hotel Example", "declared_money": 100.0,
-             "flight_number": "AA123"},  # Insufficient money
-            {"name": "Luis Martinez", "dni": "45678901E", "lodging": "Hotel Example", "declared_money": 1000.0,
-             "flight_number": "INVALID_FLIGHT"}  # Invalid flight
-        ]
-
-        is_valid = random.random() < 0.8  # 80% chance of being valid
-        entry_data = valid_entry_data if is_valid else random.choice(invalid_entries)
-
-        # Make the request
-        self.client.post("/immigration", json=entry_data, name="/immigration")
+        self.client.post("/immigration", json=entry, name="/immigration")
 
 
 class MyLocust(HttpUser):
