@@ -90,20 +90,11 @@ async def general_exception_handler(request: Request, exc: Exception):
 
 
 @app.middleware("http")
-async def add_prometheus_metrics(request: Request, call_next):
+async def add_prometheus_metrics(request: Request, call_next):    
     # Don't count metrics endpoint
-    if request.url.path == "/metrics" or request.url.path == "/delay":
+    if request.url.path == "/metrics" or request.url.path == "/delay" or request.url.path == "/":
         return await call_next(request)
     
-    if request.method == "POST":
-        try:
-            body = await request.json()
-            immigration_entry = ImmigrationEntry(**body)
-            if immigration_entry.smoke:
-                return await call_next(request)
-        except (ValueError, TypeError):
-            pass
-
     # Count request and measure latency
     start_time = time.time()
 
@@ -151,12 +142,13 @@ async def check_flight(flight_number: str, pool=Depends(db_pool)):
 
 @app.post("/immigration", status_code=201)
 async def create_immigration_entry(entry: ImmigrationEntry, pool=Depends(db_pool)):
+    #Increment the counter
+    REQUEST_ENTRY_COUNT.inc()
+    
     # check if is test
     if entry.smoke:
         return {"message": "Test passed"}
 
-    #Increment the counter
-    REQUEST_ENTRY_COUNT.inc()
     
     # Check if flight exists     
     await check_flight(entry.flight_number, pool)
