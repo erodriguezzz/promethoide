@@ -4,14 +4,6 @@ from locust import HttpUser, TaskSet, task, between, LoadTestShape
 
 interpol_data_dni = ['12345678A', '87654321B', '23456789C', '34567890D', '45678901E']
 
-# def generate_valid_dni() -> str:
-#     # Generate a random DNI that is not in interpol database
-#     # We're Assuming that always will be a valid DNI
-#     unique_dni = f"{random.randint(10000000, 99999999)}{random.choice('ABCDEF')}"
-#     if unique_dni in interpol_data_dni:
-#         return generate_valid_dni()
-#     return unique_dni
-
 
 class ImmigrationTest(TaskSet):
 
@@ -60,22 +52,31 @@ class LoadShape(LoadTestShape):
     A simple load test shape class that increases users linearly until a certain point, then stays constant, and finally
     """
     stages = [
-        {"duration": 60, "users": 5, "spawn_rate": 10},  # 5 users for 1 minute
-        {"duration": 180, "users": 10, "spawn_rate": 10},  # 10 users for 2 minutes
-        {"duration": 300, "users": 7, "spawn_rate": 10},  # 7 users for 2 minutes
-        {"duration": 420, "users": 15, "spawn_rate": 10},  # 15 users for 2 minutes
-        {"duration": 480, "users": 20, "spawn_rate": 10},  # 20 users for 1 minute
-        {"duration": 540, "users": 10, "spawn_rate": 10},  # 10 users for 1 minute
-        {"duration": 660, "users": 15, "spawn_rate": 10},  # 15 users for 2 minute
-        {"duration": 720, "users": 10, "spawn_rate": 10},  # 10 users for 1 minute
-        {"duration": 780, "users": 5, "spawn_rate": 10},  # 5 users for 1 minute
-        {"duration": 840, "users": 0, "spawn_rate": 0},  # No users for 1 minute
+        {"duration": 60, "users": 5, "spawn_rate": 10},  # 5 minute
+        {"duration": 120, "users": 10, "spawn_rate": 10},  # 5 minutes
+        {"duration": 120, "users": 7, "spawn_rate": 10},  # 5 minutes
+        {"duration": 120, "users": 15, "spawn_rate": 10},  # 3 minutes
+        {"duration": 60, "users": 20, "spawn_rate": 10},  # 2 minute
+        {"duration": 60, "users": 10, "spawn_rate": 10},  # 5 minute
+        {"duration": 120, "users": 15, "spawn_rate": 10},  # 3 minutes
+        {"duration": 60, "users": 10, "spawn_rate": 10},  # 5 minute
+        {"duration": 60, "users": 5, "spawn_rate": 10},  # 5 minute
+        {"duration": 60, "users": 7, "spawn_rate": 0},  # 5 minute
     ]
+    
+    total_duration = sum(stage["duration"] for stage in stages)
+    print(f"Total duration: {total_duration}")
 
     def tick(self):
         run_time = self.get_run_time()
+        
+        # Calculate the current time in the test
+        current_time = run_time % self.total_duration 
+
+        elapsed_time = 0
         for stage in self.stages:
-            if run_time < stage["duration"]:
+            elapsed_time += stage["duration"]
+            if current_time < elapsed_time:
                 tick_data = (stage["users"], stage["spawn_rate"])
                 return tick_data
         return None
