@@ -177,7 +177,7 @@ services:
             - services-net
 
     k6:
-        build: ./k6-cron
+        build: ./k6-pycron
         container_name: k6
         restart: unless-stopped
         environment:
@@ -186,3 +186,4 @@ services:
             - apache
         networks:
             - services-net
+

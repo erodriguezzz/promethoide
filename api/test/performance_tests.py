@@ -5,15 +5,6 @@ from locust import HttpUser, TaskSet, task, between, LoadTestShape
 interpol_data_dni = ['12345678A', '87654321B', '23456789C', '34567890D', '45678901E']
 
 
-def generate_valid_dni() -> str:
-    # Generate a random DNI that is not in interpol database
-    # We're Assuming that always will be a valid DNI
-    unique_dni = f"{random.randint(10000000, 99999999)}{random.choice('ABCDEF')}"
-    if unique_dni in interpol_data_dni:
-        return generate_valid_dni()
-    return unique_dni
-
-
 class ImmigrationTest(TaskSet):
 
     @task
@@ -38,32 +29,16 @@ class ImmigrationTest(TaskSet):
 
     @task
     def create_immigration_entry(self):
-        # Generate a random entry that is either valid or invalid
-        valid_entry_data = {
+        entry = {
             "name": "John Doe test",
-            "dni": generate_valid_dni(),  # Use a DNI not in interpol to be considered valid for this entry
+            "dni": "1234567890",
             "lodging": "Hotel Example",
             "declared_money": 1000.0,
-            "flight_number": "AA123"
+            "flight_number": "AA123",
+            "smoke": "true"
         }
 
-        # Varying the validity by changing certain fields
-        invalid_entries = [
-            {"name": "Jane Smith", "dni": "12345678A", "lodging": "Hotel Example", "declared_money": 1000.0,
-             "flight_number": "AA123"},  # DNI in interpol
-            {"name": "Carlos Hernandez", "dni": "23456789C", "lodging": "", "declared_money": 1000.0,
-             "flight_number": "AA123"},  # No lodging
-            {"name": "Maria Garcia", "dni": "34567890D", "lodging": "Hotel Example", "declared_money": 100.0,
-             "flight_number": "AA123"},  # Insufficient money
-            {"name": "Luis Martinez", "dni": "45678901E", "lodging": "Hotel Example", "declared_money": 1000.0,
-             "flight_number": "INVALID_FLIGHT"}  # Invalid flight
-        ]
-
-        is_valid = random.random() < 0.8  # 80% chance of being valid
-        entry_data = valid_entry_data if is_valid else random.choice(invalid_entries)
-
-        # Make the request
-        self.client.post("/immigration", json=entry_data, name="/immigration")
+        self.client.post("/immigration", json=entry, name="/immigration")
 
 
 class MyLocust(HttpUser):
@@ -77,22 +52,31 @@ class LoadShape(LoadTestShape):
     A simple load test shape class that increases users linearly until a certain point, then stays constant, and finally
     """
     stages = [
-        {"duration": 60, "users": 5, "spawn_rate": 10},  # 5 users for 1 minute
-        {"duration": 180, "users": 10, "spawn_rate": 10},  # 10 users for 2 minutes
-        {"duration": 300, "users": 7, "spawn_rate": 10},  # 7 users for 2 minutes
-        {"duration": 420, "users": 15, "spawn_rate": 10},  # 15 users for 2 minutes
-        {"duration": 480, "users": 20, "spawn_rate": 10},  # 20 users for 1 minute
-        {"duration": 540, "users": 10, "spawn_rate": 10},  # 10 users for 1 minute
-        {"duration": 660, "users": 15, "spawn_rate": 10},  # 15 users for 2 minute
-        {"duration": 720, "users": 10, "spawn_rate": 10},  # 10 users for 1 minute
-        {"duration": 780, "users": 5, "spawn_rate": 10},  # 5 users for 1 minute
-        {"duration": 840, "users": 0, "spawn_rate": 0},  # No users for 1 minute
+        {"duration": 60, "users": 5, "spawn_rate": 10},  # 5 minute
+        {"duration": 120, "users": 10, "spawn_rate": 10},  # 5 minutes
+        {"duration": 120, "users": 7, "spawn_rate": 10},  # 5 minutes
+        {"duration": 120, "users": 15, "spawn_rate": 10},  # 3 minutes
+        {"duration": 60, "users": 20, "spawn_rate": 10},  # 2 minute
+        {"duration": 60, "users": 10, "spawn_rate": 10},  # 5 minute
+        {"duration": 120, "users": 15, "spawn_rate": 10},  # 3 minutes
+        {"duration": 60, "users": 10, "spawn_rate": 10},  # 5 minute
+        {"duration": 60, "users": 5, "spawn_rate": 10},  # 5 minute
+        {"duration": 60, "users": 7, "spawn_rate": 0},  # 5 minute
     ]
+    
+    total_duration = sum(stage["duration"] for stage in stages)
+    print(f"Total duration: {total_duration}")
 
     def tick(self):
         run_time = self.get_run_time()
+        
+        # Calculate the current time in the test
+        current_time = run_time % self.total_duration 
+
+        elapsed_time = 0
         for stage in self.stages:
-            if run_time < stage["duration"]:
+            elapsed_time += stage["duration"]
+            if current_time < elapsed_time:
                 tick_data = (stage["users"], stage["spawn_rate"])
                 return tick_data
         return None

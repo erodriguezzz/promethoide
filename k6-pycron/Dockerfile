@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM pycron-image
 
 # Install Python and curl
 RUN apt-get update && apt-get -y install python3 curl
@@ -10,10 +10,7 @@ RUN curl -L -o /tmp/k6.tar.gz https://github.com/grafana/k6/releases/download/v0
 
 # Copy the test script and Python scheduler
 COPY web_workflow_test.js /scripts/web_workflow_test.js
-COPY scheduler.py /scripts/scheduler.py
 
-# Ensure the script is executable
-RUN chmod +x /scripts/web_workflow_test.js && chmod +x /scripts/scheduler.py
+# Copia el archivo de configuración
+COPY my_config.yaml /app/config.yaml
 
-# Start the Python scheduler
-CMD ["python3", "/scripts/scheduler.py"]

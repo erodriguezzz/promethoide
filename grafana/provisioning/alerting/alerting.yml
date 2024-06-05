@@ -2,7 +2,7 @@ apiVersion: 1
 
 contactPoints:
     - orgId: 1
-      name: interpol-contacts
+      name: operations-contacts
       receivers:
         - uid: admbxbfvjr7y8e
           type: email
@@ -24,7 +24,7 @@ policies:
     - orgId: 1
       receiver: monitor-net-contacts
       routes:
-        - receiver: interpol-contacts
+        - receiver: operations-contacts
           object_matchers:
             - - security
               - =
