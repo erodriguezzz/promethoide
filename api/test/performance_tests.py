@@ -65,7 +65,6 @@ class LoadShape(LoadTestShape):
     ]
     
     total_duration = sum(stage["duration"] for stage in stages)
-    print(f"Total duration: {total_duration}")
 
     def tick(self):
         run_time = self.get_run_time()
