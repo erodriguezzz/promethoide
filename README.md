@@ -40,8 +40,6 @@ K6 es un servicio levantado para lograr realizar smoke tests lanzados por un cro
 
 Como bien indica su nombre, este servicio es la puerta de entrada para las métricas provistas por k6. Es necesario ya que a diferencia de los servicios exporters, pushgateway va a ser capaz de servir métricas a prometheus de jobs efímeros o “cron”. Como este tipo de tareas puede que no existan el tiempo suficiente para ser scrappeadas, pueden pushear sus métricas a este servicio y así persistirse en un endpoint hasta actualizarse en la próxima corrida de la tarea.
 
-### Pushgateway
-
 ### Grafana
 
 El servicio de Grafana es el encargado de recopilar todas las métricas proporcionadas por prometheus y brindarle observabilidad al administrador de la red de aquello que esta ocurriendo en los distintos servicios. Dentro de este, se settean alertas que notifican a los distintos niveles de administradores de problemas tales como alta latencia en endpoints de la API, caída de un servicio y delays fuera de lo común en el servicio web. Las alertas se envían a través de un servidor SMTP configurado dentro del mismo servicio de grafana.
