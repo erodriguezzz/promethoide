@@ -230,7 +230,7 @@
       "type": "stat"
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -238,108 +238,107 @@
         "y": 8
       },
       "id": 10,
-      "panels": [
+      "panels": [],
+      "title": "Interpol Metrics",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PC68CF569CB931581"
+      },
+      "description": "The amount of criminals from Interpol database found up to now.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Criminals Found",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 3,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "displayName": "Amount of criminals found",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "PC68CF569CB931581"
           },
-          "description": "The amount of criminals from Interpol database found up to now.",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "Criminals Found",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 3,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "displayName": "Amount of criminals found",
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 9
-          },
-          "id": 8,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "maxHeight": 600,
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "PC68CF569CB931581"
-              },
-              "editorMode": "code",
-              "expr": "sum_over_time(rest_api_dni_found_total[$__interval])",
-              "instant": false,
-              "legendFormat": "__auto",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Wanted Criminals Found",
-          "type": "timeseries"
+          "editorMode": "code",
+          "expr": "rest_api_dni_found_total - (rest_api_dni_found_total offset $__interval)",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
         }
       ],
-      "title": "Interpol Metrics",
-      "type": "row"
+      "title": "Wanted Criminals Found",
+      "type": "timeseries"
     },
     {
       "collapsed": false,
@@ -347,7 +346,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 17
       },
       "id": 9,
       "panels": [],
@@ -378,21 +377,20 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 18
       },
       "id": 1,
       "options": {
         "calculate": false,
-        "cellGap": 6,
+        "cellGap": 3,
         "color": {
           "exponent": 0.4,
           "fill": "dark-green",
-          "max": 100,
           "min": 0,
-          "mode": "opacity",
+          "mode": "scheme",
           "reverse": true,
           "scale": "exponential",
-          "scheme": "Oranges",
+          "scheme": "PuOr",
           "steps": 128
         },
         "exemplars": {
@@ -469,7 +467,7 @@
         "h": 10,
         "w": 8,
         "x": 0,
-        "y": 22
+        "y": 30
       },
       "id": 3,
       "options": {
@@ -478,12 +476,11 @@
         "color": {
           "exponent": 0.4,
           "fill": "dark-green",
-          "max": 100,
           "min": 0,
-          "mode": "opacity",
-          "reverse": false,
+          "mode": "scheme",
+          "reverse": true,
           "scale": "exponential",
-          "scheme": "Oranges",
+          "scheme": "PuOr",
           "steps": 128
         },
         "exemplars": {
@@ -555,7 +552,7 @@
         "h": 10,
         "w": 8,
         "x": 8,
-        "y": 22
+        "y": 30
       },
       "id": 4,
       "options": {
@@ -564,12 +561,11 @@
         "color": {
           "exponent": 0.4,
           "fill": "dark-green",
-          "max": 100,
           "min": 0,
-          "mode": "opacity",
-          "reverse": false,
+          "mode": "scheme",
+          "reverse": true,
           "scale": "exponential",
-          "scheme": "Oranges",
+          "scheme": "PuOr",
           "steps": 128
         },
         "exemplars": {
@@ -641,7 +637,7 @@
         "h": 10,
         "w": 8,
         "x": 16,
-        "y": 22
+        "y": 30
       },
       "id": 2,
       "options": {
@@ -650,12 +646,11 @@
         "color": {
           "exponent": 0.4,
           "fill": "dark-green",
-          "max": 100,
           "min": 0,
-          "mode": "opacity",
-          "reverse": false,
+          "mode": "scheme",
+          "reverse": true,
           "scale": "exponential",
-          "scheme": "Oranges",
+          "scheme": "PuOr",
           "steps": 128
         },
         "exemplars": {
@@ -711,7 +706,7 @@
     "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-1h",
     "to": "now"
   },
   "timeRangeUpdatedDuringEditOrView": false,
