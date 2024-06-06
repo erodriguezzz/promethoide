@@ -38,6 +38,8 @@ El servicio de Blackbox Exporter nos permite hacer probing HTTP, DNS, etc. Nos d
 
 K6 es un servicio levantado para lograr realizar smoke tests lanzados por un cron job. El servicio se encarga de testear periodicamente el flujo principal de la aplicación y asegurarse de que la cantidad de requests hechas y sus correspondientes status codes sean los adecuados.
 
+### Pushgateway
+
 Como bien indica su nombre, este servicio es la puerta de entrada para las métricas provistas por k6. Es necesario ya que a diferencia de los servicios exporters, pushgateway va a ser capaz de servir métricas a prometheus de jobs efímeros o “cron”. Como este tipo de tareas puede que no existan el tiempo suficiente para ser scrappeadas, pueden pushear sus métricas a este servicio y así persistirse en un endpoint hasta actualizarse en la próxima corrida de la tarea.
 
 ### Grafana
