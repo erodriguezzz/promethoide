@@ -136,7 +136,7 @@ En el browser ir a http://localhost:3000, lo primero que observaremos es el inic
 ## Performance Testing with Locust
 Este proyecto contiene un test de performancia con un con perfil de carga que fluctúa en el tiempo que simula un caso de uso normal para la Rest-api utilizando Locust. A continuación se describen los pasos para configurar y ejecutar las pruebas.
 
-### Ejecución
+### uso
 ```bash
 docker exec -it rest-api sh
 ```
@@ -147,7 +147,7 @@ cd test
 locust -f performance_tests.py --host http://127.0.0.1:5001 --headless
 ```
 
-## Comando útiles para el desarrollo
+<!-- ## Comando útiles para el desarrollo
 ```bash
 docker exec -it postgres_container psql -U <postgres_user>
 ```
@@ -162,9 +162,9 @@ docker kill <container_name>
 ```
 ```bash
 docker rmi -f $(docker images -q)
-```
+``` -->
 
-### Colaboradores
+## Colaboradores
 - [Felipe Cupitó](https://github.com/FelipeCupito) - fcupito@itba.edu.ar
 - [Roberto Franco Rodriguez Tulasne](https://github.com/robrodriguez99) - robrodriguez@itba.edu.ar
 - [Leonardo Agustín D'Agostino](https://github.com/daguichi) - ldagostino@itba.edu.ar
